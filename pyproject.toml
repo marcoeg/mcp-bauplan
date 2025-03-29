@@ -1,0 +1,29 @@
+[project]
+name = "mcp-bauplan"
+version = "0.0.1"
+description = "An MCP server to interact with a the Bauplan API."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+ "requests>=2.32",
+ "mcp>=1.0.0",
+ "python-dotenv>=1.0.1",
+ "uvicorn>=0.27.0",
+ "starlette>=0.36.0",
+ "typer>=0.15.2",
+ "bauplan"
+]
+
+authors = [{ name = "Graziano Labs Corp." }]
+maintainers = [
+    { name = "Marco Graziano", email = "marco@graziano.com" },
+]
+keywords = ["mcp", "data", "analytics"]
+license = { text = "MIT" }
+
+[build-system]
+requires = [ "hatchling",]
+build-backend = "hatchling.build"
+
+[project.scripts]
+mcp-bauplan = "mcp_bauplan.main:main"
