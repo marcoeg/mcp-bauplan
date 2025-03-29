@@ -7,21 +7,9 @@ from typing import Dict, Any
 import bauplan
 import datetime
 
-load_dotenv()
+env_path = os.path.join(os.getcwd(), ".env")
+load_dotenv(env_path)
 from mcp_bauplan.mcp_config import config
-
-""" 
-BAUPLAN_API_KEY = os.getenv("BAUPLAN_API_KEY")
-if not BAUPLAN_API_KEY:
-    raise ValueError("BAUPLAN_API_KEY environment variable not set")
-BAUPLAN_BRANCH = os.getenv("BAUPLAN_BRANCH")
-if not BAUPLAN_BRANCH:
-    raise ValueError("BAUPLAN_BRANCH environment variable not set")
-BAUPLAN_NAMESPACE = os.getenv("BAUPLAN_NAMESPACE")
-if not BAUPLAN_NAMESPACE:
-    raise ValueError("BAUPLAN_NAMESPACE environment variable not set")
-BAUPLAN_TIMEOUT = os.getenv("BAUPLAN_TIMEOUT")
-"""
 
 MCP_SERVER_NAME = "mcp-bauplan"
 
@@ -56,11 +44,12 @@ def create_bauplan_client():
     try:
         # Establish connection to Bauplan
         client = bauplan.Client(
+            api_key=config.api_key,
             branch=config.branch, 
             namespace=config.namespace, 
             client_timeout=config.timeout
-        )   
-        logger.info(f"Successfully connected to Bauplan.")   
+        )
+        logger.info(f"Connected to Bauplan. branch={client.profile.branch} - namespace={client.profile.namespace}")   
         return client
         
     except Exception as e:
@@ -80,7 +69,6 @@ def execute_query(query: str):
             "metadata": {},
             "error": None
         }
-
         print(f"Executing query: {query}")
         
         # Execute query and get results as Arrow table
@@ -112,7 +100,7 @@ def execute_query(query: str):
         response["status"] = "error"
         response["error"] = error_message
         response["data"] = []  # Ensure empty data on error
-    
+        
     return response
 
 
