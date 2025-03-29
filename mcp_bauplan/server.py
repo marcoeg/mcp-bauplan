@@ -79,15 +79,18 @@ def execute_query(query: str):
             client_timeout=config.timeout
         )
 
-        # Convert pyarrow.Table to list of dictionaries
-        data_rows = [dict(zip(result.column_names, row)) for row in zip(*[result[col] for col in result.column_names])]
+        # Convert pyarrow.Table to list of dictionaries with native Python values
+        data_rows = [
+            dict(zip(result.column_names, [val.as_py() for val in row]))
+            for row in zip(*[result[col] for col in result.column_names])
+        ]
 
         # Add data and metadata to response
         response["data"] = data_rows
         response["metadata"] = {
             "row_count": len(data_rows),
             "column_names": result.column_names,
-            "column_types": [col[1] for col in result.column_types],
+            "column_types": [str(field.type) for field in result.schema],
             "query_time": datetime.datetime.now().isoformat(),
             "query": query,
         }
