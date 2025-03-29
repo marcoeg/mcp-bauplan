@@ -1,7 +1,7 @@
 
 import logging
 from dotenv import load_dotenv
-from mcp.server.fastmcp import FastMCP, Context
+from mcp.server.fastmcp import FastMCP
 import os
 from typing import Dict, Any
 import bauplan
