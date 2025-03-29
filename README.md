@@ -1,5 +1,5 @@
 # mcp-bauplan
-A Model Context Protocol MCP server to interact with data tables and running Bauplan queries.
+A mimimalist Model Context Protocol MCP server to interact with data tables and running Bauplan queries.
 
 ## Features
 - Get Bauplan data tables and their schemas in the configured namespace
