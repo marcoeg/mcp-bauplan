@@ -1,6 +1,8 @@
 # mcp-bauplan
 A mimimalist Model Context Protocol MCP server to interact with data tables and running Bauplan queries.
 
+Bauplan manages a data store of Iceberg tables in S3.
+
 ## Features
 - Get Bauplan data tables and their schemas in the configured namespace
 - Query Bauplan data tables using SQL (SELECT only)

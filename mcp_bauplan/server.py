@@ -1,7 +1,7 @@
 
 import logging
 from dotenv import load_dotenv
-from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp import FastMCP, Context
 import os
 from typing import Dict, Any
 import bauplan
@@ -74,7 +74,9 @@ def execute_query(query: str):
         # Execute query and get results as Arrow table
         result = bauplan_client.query(
             query=query,
-            ref=config.branch
+            ref=config.branch,
+            namespace=config.namespace,
+            client_timeout=config.timeout
         )
 
         # Convert pyarrow.Table to list of dictionaries
@@ -103,12 +105,97 @@ def execute_query(query: str):
         
     return response
 
+@mcp.tool(name="list_tables", description="List all data tables in the Bauplan data store.")
+def list_tables():
+    """
+    List all data tables n the configured Bauplan branch and namespace.
+    
+    Returns:
+        dict: Tables object with names
+    """
+    logger.info(f"Executing list_tables")
+    try:
+        client =  create_bauplan_client()
+        ret = client.get_tables(ref=config.branch, namespace=config.namespace)
+        tables = {"tables": [{"name": table.name} for table in ret]}
+        return tables
+    
+    except Exception as err:
+        # Consistent error handling with detailed information
+        error_message = str(err)
+        logger.error(f"Error executing get_schema: {error_message}")
+        response = {
+            "status": "error",
+            "error":  error_message
+        }
+        return response
+    
+@mcp.tool(name="get_schema", description="Get the schema of the Bauplan data store.")
+def get_schema():
+    """
+    Return the schema of all data tables in the configured Bauplan branch and namespace.
+    
+    Returns:
+        dict: Schema object with table fields
+    """
+    logger.info(f"Executing get_schema")
+    try:
+        client =  create_bauplan_client()
+        # Get the tables list
+        ret = client.get_tables(ref=config.branch, namespace=config.namespace)
+        tables = {"tables": [{"name": table.name} for table in ret]}
+        # Iterate to get schemas and build final structure
+        schema_data = {
+            "schema": [
+                {
+                    "table": {
+                        "name": t["name"],
+                        "fields": client.get_table(
+                            table=f"{config.namespace}.{t['name']}",
+                            ref=config.branch,
+                            include_raw=True
+                        ).raw['schemas'][0]['fields']
+                    }
+                }
+                for t in tables["tables"]
+            ]
+        }
+        return schema_data
+    
+    except Exception as err:
+        # Consistent error handling with detailed information
+        error_message = str(err)
+        logger.error(f"Error executing get_schema: {error_message}")
+        response = {
+            "status": "error",
+            "error":  error_message
+        }
+        return response
 
-"""
-- `list_tables`:
-   - Lists all the tables in the configured namespace
-- `get_schema`:
-   - Get the schema of a data tables
-- `run_query`:
-   - Run a SELECT query on the specified table 
-"""
+@mcp.tool(name="run_query", description="Query the Bauplan data store using SQL.")
+def run_query(query: str):
+    """
+    Executes a query against the Bauplan data store with timeout protection.
+    
+    Args:
+        query (str): SQL query to execute
+        
+    Returns:
+        dict: Response object with status, data, and error information
+    """
+    # Log query for debugging and audit purposes
+    logger.info(f"Executing query: {query}")
+    
+    # Enforce SELECT query for security (prevent other operations)
+    if not query.strip().upper().startswith("SELECT"):
+        logger.info(f"Exiting: only SELECT queries are permitted")
+        return {
+            "status": "error",
+            "error": "Only SELECT queries are permitted",
+            "data": [],
+            "metadata": {"query": query}
+        }
+    
+    result = execute_query(query)
+   
+    return result
