@@ -29,7 +29,7 @@ The server implements the following tools to interact with Bauplan data tables:
 ```json
 {
   "mcpServers": {
-    "mcp-nvd": {
+    "mcp-bauplan": {
       "command": "/path/to/uvx",
       "args": ["mcp-bauplan"],
       "env": {
@@ -82,10 +82,10 @@ uv pip install -e .
 cd /path/to/the/repo
 source .env
 
-CLIENT_PORT=8077 SERVER_PORT=8078  npx @modelcontextprotocol/inspector uv \
-    --directory /path/to/repo/mcp-bauplan run mcp-bauplan
+CLIENT_PORT=8077 SERVER_PORT=8078 npx @modelcontextprotocol/inspector \
+     uv run mcp-bauplan
  ```
->Omit `CLIENT_PORT=8077 SERVER_PORT=8078` if standard ports are not conflicting.
+>Note: omit `CLIENT_PORT=8077 SERVER_PORT=8078` if the standard ports are not conflicting.
 
 Then open the browser to the URL indicated by the MCP Inspector, typically `http://localhost:8077?proxyPort=8078`
 
