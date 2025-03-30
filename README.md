@@ -48,6 +48,13 @@ The server implements the following tools to interact with Bauplan data tables:
 
 4. Restart Claude Desktop to apply the changes.
 
+## Run the stand-alone SSE server
+Create a .env file from .env.example and then execute the following command:
+```bash
+$ uvx --env-file /path/to/.env mcp-bauplan --transport sse --port 9090
+```
+>Note the use of `nvx` and not `uvx` will fetch `mcp-bauplan` from the default registry https://pypi.org.
+
 ## Development
 
 ### Setup
