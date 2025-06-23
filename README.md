@@ -55,8 +55,17 @@ $ uvx --env-file /path/to/.env mcp-bauplan --transport sse --port 9090
 ```
 >Note the use of `nvx` and not `uvx` will fetch `mcp-bauplan` from the default registry https://pypi.org.
 
-## Development
+## Future Development
 
+## Development - work in progress
+1. Documentation of Bauplan (SDK and Platform) as Resource
+2. Automation of Bauplan Execution - more commands and run a pipeline
+3. Query Generation
+4. Code Generation Using Templates
+5. Data Governance & Compliance
+6. Testing & Validation
+7. Integration Ecosystem
+   
 ### Setup
 
 1. **Prerequisites**:
